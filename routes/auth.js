@@ -10,7 +10,7 @@ const {
   isLoggedIn,
   isNotLoggedIn,
   validationLoggin,
-} = require('../../../billy/billybackend/helpers/middlewares');
+} = require('../helpers/middelwares');
 
 router.get('/me', isLoggedIn(), (req, res, next) => {
   res.json(req.session.currentUser);
