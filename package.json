@@ -7,8 +7,8 @@
     "dev": "nodemon ./bin/www"
   },
   "engines": {
-    "node": "10.11.0",
-    "npm": "6.4.1"
+    "node": "8.10.0",
+    "npm": "6.9.0"
   },
   "dependencies": {
     "bcrypt": "^3.0.1",
