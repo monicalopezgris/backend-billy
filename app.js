@@ -14,6 +14,7 @@ const doc = require('./routes/doc');
 
 mongoose
   .connect(process.env.MONGODB_URI, {
+    dbName:'cluster0-shard-00-00-cqy99.mongodb.net:27017',
     keepAlive: true,
     useNewUrlParser: true,
     reconnectTries: Number.MAX_VALUE,
