@@ -9,7 +9,6 @@ const Doc = require('../models/doc');
 router.get('/doc', async (req, res, next) => {
   try{
     const list = await Doc.find();
-    console.log(list[0].data.client)
     return res.status(200).json(list)
   }catch(error){
     next(error)
@@ -17,7 +16,7 @@ router.get('/doc', async (req, res, next) => {
 });
 
 router.post('/doc', async (req, res, next) => {
-    const { ref, name, nif, street, streetNum, postalCode, country, item, units, priceUnit} = req.body;
+    const { ref, name, nif, street, streetNum, postalCode, country, items} = req.body;
 
     try {
       const doc = await Doc.create({
@@ -33,11 +32,7 @@ router.post('/doc', async (req, res, next) => {
               country,
             }
           },
-          service:{
-            item,
-            units,
-            priceUnit,
-          },
+          items:items
         }
       });
       res.status(200).json(doc);

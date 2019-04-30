@@ -1,10 +1,14 @@
 const createError = require('http-errors');
 
 exports.isLoggedIn = () => (req, res, next) => {
+  console.log('aasssssssssssssssssssssssssssssss')
   if (req.session.currentUser) {
     next();
   } else {
-    next(createError(401));
+    console.log('not logged in')
+    next(
+      // createError(401)
+      );
   }
 };
 

@@ -12,7 +12,9 @@ const {
   validationLoggin,
 } = require('../helpers/middelwares');
 
-router.get('/me', isLoggedIn(), (req, res, next) => {
+router.get('/me',
+ isLoggedIn(),
+  (req, res, next) => {
   res.json(req.session.currentUser);
 });
 

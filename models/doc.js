@@ -16,11 +16,11 @@ const docSchema = new Schema({
         country:String,
       }
     },
-    service:{
+    items:[{
       item:String,
       units:Number,
       priceUnit:Number,
-    }
+    }]
   }
 }, {
   timestamps: {
