@@ -33,6 +33,7 @@ const app = express();
 //     origin: [process.env.PUBLIC_DOMAIN],
 //   }),
 // );
+
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', process.env.PUBLIC_DOMAIN);
   res.setHeader('Access-Control-Allow-Methods', 'GET,PUT,POST,OPTIONS,DELETE');
