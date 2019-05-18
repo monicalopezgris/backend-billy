@@ -20,7 +20,7 @@ const docSchema = new Schema({
       cif: String,
       address: {
         street: String,
-        number: Number,
+        streetNum: Number,
         postalCode: Number,
         country: String,
       }

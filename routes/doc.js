@@ -26,7 +26,6 @@ router.get('/doc/:id', async (req, res, next) => {
 });
 
 router.post('/doc', async (req, res, next) => {
-  console.log('post')
   const { status, items } = req.body;
   const clientId = req.body.clientId ? req.body.clientId : undefined;
 
@@ -50,7 +49,7 @@ router.post('/doc', async (req, res, next) => {
             cif,
             address: {
               street,
-              number: streetNum,
+              streetNum,
               postalCode,
               country,
             }
@@ -93,7 +92,7 @@ router.put('/doc/:id', async (req, res, next) => {
               cif,
               address: {
                 street,
-                number: streetNum,
+                streetNum,
                 postalCode,
                 country,
               }

@@ -26,12 +26,13 @@ router.get('/clients/:id', async (req, res, next) => {
 });
 
 router.post('/clients', async (req, res, next) => {
-  const { name, cif, street, streetNum, postalCode, country } = req.body;
+  const { name, cif, contact, street, streetNum, postalCode, country } = req.body;
 
   try {
     const client = await Clients.create({
       name,
       cif,
+      contact,
       address: {
         street,
         number: streetNum,
@@ -48,11 +49,12 @@ router.post('/clients', async (req, res, next) => {
 
 router.put('/clients/:id', async (req, res, next) => {
   const { id } = req.params;
-  const { name, cif, street, streetNum, postalCode, country } = req.body;
+  const { name, cif, contact, street, streetNum, postalCode, country } = req.body;
   try {
     const client = await Doc.findByIdAndUpdate(id, {
       name,
       cif,
+      contact,
       address: {
         street,
         number: streetNum,
