@@ -26,25 +26,40 @@ router.get('/doc/:id', async (req, res, next) => {
 });
 
 router.post('/doc', async (req, res, next) => {
-  const { name, nif, street, streetNum, postalCode, country, items } = req.body;
+  const { status, items } = req.body;
+  const clientId = req.body.clientId ? req.body.clientId : undefined;
 
   try {
-    const doc = await Doc.create({
-      data: {
-        client: {
-          name,
-          nif,
-          address: {
-            street,
-            number: streetNum,
-            postalCode,
-            country,
-          }
+    if (clientId) {
+      const doc = await Doc.create({
+        status,
+        data: {
+          clientId,
         },
         items: items
-      }
-    });
-    res.status(200).json(doc);
+      });
+      res.status(200).json(doc);
+    } else {
+      const { name, cif, street, streetNum, postalCode, country } = req.body;
+      const doc = await Doc.create({
+        status,
+        data: {
+          client: {
+            name,
+            cif,
+            address: {
+              street,
+              streetNum,
+              postalCode,
+              country,
+            }
+          },
+          items: items
+        }
+      });
+      res.status(200).json(doc);
+    }
+
   } catch (error) {
     next(error);
   }
@@ -53,39 +68,44 @@ router.post('/doc', async (req, res, next) => {
 
 router.put('/doc/:id', async (req, res, next) => {
   const { id } = req.params;
-  const { name, nif, street, streetNum, postalCode, country, items } = req.body;
+  const clientId = req.body.clientId ? req.body.clientId : false;
 
   try {
-    // items.forEach(item => {
-    //   Doc.findByIdAndUpdate(id, {
-    //     data: {
-    //       $push: { items: item }
-    //     }
-    //   })
-    //     .then((data) => {
-    //       console.log(data)
-    //     })
-    // });
-
-    // const found = await Doc.findById(id);
-
-
-    const doc = await Doc.findByIdAndUpdate(id, {
-      data: {
-        client: {
-          name,
-          nif,
-          address: {
-            street,
-            number: streetNum,
-            postalCode,
-            country,
+    const actualDoc = await Doc.findById(id);
+    if (actualDoc.status === "draft") {
+      if (clientId) {
+        const doc = await Doc.findByIdAndUpdate(id, {
+          status,
+          clientId,
+          data: {
+            items: items
           }
-        },
-        items
+        });
+        res.status(200).json(doc)
+      } else {
+        const { name, status, cif, street, streetNum, postalCode, country, items } = req.body;
+        const doc = await Doc.findByIdAndUpdate(id, {
+          status,
+          data: {
+            client: {
+              name,
+              cif,
+              address: {
+                street,
+                streetNum,
+                postalCode,
+                country,
+              }
+            },
+            items: items
+          }
+        });
+        res.status(200).json(doc);
       }
-    });
-    res.status(200).json(doc)
+    }
+    else {
+      res.status(500).json(doc)
+    }
   } catch (error) {
     next(error)
   }
@@ -94,8 +114,13 @@ router.put('/doc/:id', async (req, res, next) => {
 router.delete('/doc/:id', async (req, res, next) => {
   const { id } = req.params;
   try {
+    // const docInit = await Doc.findById(id);
+    // if (!docInit){
+    //   res.status(500).send()
+    // }else{
     const doc = await Doc.findByIdAndDelete(id);
     res.status(200).json(doc)
+    // }
   } catch (error) {
     next(error)
   }
