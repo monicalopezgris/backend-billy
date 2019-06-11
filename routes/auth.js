@@ -9,19 +9,22 @@ const User = require('../models/user');
 const {
   isLoggedIn,
   isNotLoggedIn,
-  validationLoggin,
 } = require('../helpers/middelwares');
+const {
+  signUpValidator,
+  logInValidator,
+} = require('../helpers/validators/auth');
 
 router.get('/me',
- isLoggedIn(),
+  isLoggedIn(),
   (req, res, next) => {
-  res.json(req.session.currentUser);
-});
+    res.json(req.session.currentUser);
+  });
 
 router.post(
   '/login',
   isNotLoggedIn(),
-  validationLoggin(),
+  logInValidator,
   async (req, res, next) => {
     const { username, password } = req.body;
     try {
@@ -43,7 +46,7 @@ router.post(
 router.post(
   '/signup',
   isNotLoggedIn(),
-  validationLoggin(),
+  signUpValidator,
   async (req, res, next) => {
     const { username, password } = req.body;
 
@@ -69,10 +72,22 @@ router.post('/logout', isLoggedIn(), (req, res, next) => {
   return res.status(204).send();
 });
 
-router.get('/private', isLoggedIn(), (req, res, next) => {
-  res.status(200).json({
-    message: 'This is a private message',
-  });
-});
+router.get(
+  '/meData',
+  isLoggedIn(),
+  async (req, res, next) => {
+    const { _id: id } = req.session.currentUser;
+    try {
+      const user = await User.findById(id);
+      if (!user) {
+        next(createError(404));
+      } else {
+        return res.status(200).json(user);
+      }
+    } catch (error) {
+      next(error);
+    }
+  },
+);
 
 module.exports = router;
