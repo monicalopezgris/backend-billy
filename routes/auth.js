@@ -31,6 +31,12 @@ router.post(
   logInValidator,
   async (req, res, next) => {
     const { username, password } = req.body;
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      return res.status(422).json(errors.array());
+    }
+
     try {
       const user = await User.findOne({ username });
       if (!user) {
@@ -53,6 +59,11 @@ router.post(
   signUpValidator,
   async (req, res, next) => {
     const { username, password } = req.body;
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      return res.status(422).json(errors.array());
+    }
 
     try {
       const user = await User.findOne({ username }, 'username');
