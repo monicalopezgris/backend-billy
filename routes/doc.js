@@ -22,7 +22,7 @@ router.get('/doc/:id', isLoggedIn(), async (req, res, next) => {
     const doc = await Doc.findById(id);
     return res.status(200).json(doc);
   } catch (error) {
-    next(error)
+    next(createError(404))
   }
 });
 
@@ -62,7 +62,7 @@ router.post('/doc', isLoggedIn(), async (req, res, next) => {
     }
 
   } catch (error) {
-    next(error);
+    next(createError(404))
   }
 },
 );
@@ -105,10 +105,11 @@ router.put('/doc/:id', isLoggedIn(), async (req, res, next) => {
       }
     }
     else {
-      res.status(500).json(doc)
+      next(createError(500))
+      // res.status(500).json(doc)
     }
   } catch (error) {
-    next(error)
+    next(createError(404))
   }
 });
 
@@ -123,7 +124,7 @@ router.delete('/doc/:id', isLoggedIn(), async (req, res, next) => {
     res.status(200).json(doc)
     // }
   } catch (error) {
-    next(error)
+    next(createError(404))
   }
 });
 
