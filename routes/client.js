@@ -12,7 +12,7 @@ router.get('/', isLoggedIn(), async (req, res, next) => {
     const list = await Clients.find();
     return res.status(200).json(list)
   } catch (error) {
-    next(error)
+    next(createError(404))
   }
 });
 
@@ -22,7 +22,7 @@ router.get('/:id', isLoggedIn(), async (req, res, next) => {
     const client = await Clients.findById(id);
     return res.status(200).json(client);
   } catch (error) {
-    next(error)
+    next(createError(404))
   }
 });
 
@@ -43,7 +43,7 @@ router.post('/', isLoggedIn(), async (req, res, next) => {
     });
     res.status(200).json(client);
   } catch (error) {
-    next(error);
+    next(createError(404))
   }
 },
 );
@@ -65,7 +65,7 @@ router.put('/:id', isLoggedIn(), async (req, res, next) => {
     });
     res.status(200).json(client)
   } catch (error) {
-    next(error)
+    next(createError(404))
   }
 });
 
@@ -80,7 +80,7 @@ router.delete('/:id', isLoggedIn(), async (req, res, next) => {
     res.status(200).json(client)
     // }
   } catch (error) {
-    next(error)
+    next(createError(404))
   }
 });
 
