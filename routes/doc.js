@@ -4,6 +4,7 @@ const createError = require('http-errors');
 const router = express.Router();
 
 const Doc = require('../models/doc');
+const { validationResult, newClientDocValidator } = require('../helpers/validators/doc');
 const { isLoggedIn } = require('../helpers/middelwares');
 
 
@@ -26,9 +27,14 @@ router.get('/:id', isLoggedIn(), async (req, res, next) => {
   }
 });
 
-router.post('/', isLoggedIn(), async (req, res, next) => {
+router.post('/', isLoggedIn(), newClientDocValidator, async (req, res, next) => {
   const { status, items } = req.body;
   const clientId = req.body.clientId ? req.body.clientId : undefined;
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    return res.status(422).json(errors.array());
+  }
 
   try {
     if (clientId) {
@@ -67,9 +73,14 @@ router.post('/', isLoggedIn(), async (req, res, next) => {
 },
 );
 
-router.put('/:id', isLoggedIn(), async (req, res, next) => {
+router.put('/:id', isLoggedIn(), newClientDocValidator, async (req, res, next) => {
   const { id } = req.params;
   const clientId = req.body.clientId ? req.body.clientId : false;
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    return res.status(422).json(errors.array());
+  }
 
   try {
     const actualDoc = await Doc.findById(id);

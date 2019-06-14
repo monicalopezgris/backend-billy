@@ -5,6 +5,7 @@ const router = express.Router();
 
 const Clients = require('../models/client');
 const { isLoggedIn } = require('../helpers/middelwares');
+const { validationResult, clientValidator } = require('../helpers/validators/doc');
 
 
 router.get('/', isLoggedIn(), async (req, res, next) => {
@@ -26,8 +27,13 @@ router.get('/:id', isLoggedIn(), async (req, res, next) => {
   }
 });
 
-router.post('/', isLoggedIn(), async (req, res, next) => {
+router.post('/', isLoggedIn(), clientValidator, async (req, res, next) => {
   const { name, cif, contact, street, streetNum, postalCode, country } = req.body;
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    return res.status(422).json(errors.array());
+  }
 
   try {
     const client = await Clients.create({
@@ -48,9 +54,14 @@ router.post('/', isLoggedIn(), async (req, res, next) => {
 },
 );
 
-router.put('/:id', isLoggedIn(), async (req, res, next) => {
+router.put('/:id', isLoggedIn(), clientValidator, async (req, res, next) => {
   const { id } = req.params;
   const { name, cif, contact, street, streetNum, postalCode, country } = req.body;
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    return res.status(422).json(errors.array());
+  }
   try {
     const client = await Doc.findByIdAndUpdate(id, {
       name,
