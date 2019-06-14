@@ -11,7 +11,7 @@ router.get('/company', isLoggedIn(), async (req, res, next) => {
     const list = await Company.find();
     return res.status(200).json(list)
   } catch (error) {
-    next(error)
+    next(createError(404))
   }
 });
 
@@ -21,7 +21,7 @@ router.get('/company/:id', isLoggedIn(), async (req, res, next) => {
     const company = await Company.findById(id);
     return res.status(200).json(company);
   } catch (error) {
-    next(error)
+    next(createError(404))
   }
 });
 
@@ -43,7 +43,7 @@ router.post('/company', isLoggedIn(), async (req, res, next) => {
     });
     res.status(200).json(company);
   } catch (error) {
-    next(error);
+    next(createError(404))
   }
 },
 );
@@ -54,7 +54,8 @@ router.put('/company/:id', isLoggedIn(), async (req, res, next) => {
   try {
     let company = await Company.findById(id);
     if (company.admin !== idUser) {
-      res.status(500).send('You are not admin of the company')
+      next(createError(500))
+      // res.status(500).send('You are not admin of the company')
     } else {
       company = await Company.findByIdAndUpdate(id, {
         admin,
@@ -71,7 +72,7 @@ router.put('/company/:id', isLoggedIn(), async (req, res, next) => {
       res.status(200).json(company)
     }
   } catch (error) {
-    next(error)
+    next(createError(404))
   }
 });
 
@@ -80,13 +81,14 @@ router.delete('/company/:id', isLoggedIn(), async (req, res, next) => {
   try {
     let company = await Company.findById(id);
     if (company.admin !== idUser) {
-      res.status(500).send('You are not admin of the company')
+      next(createError(500))
+      // res.status(500).send('You are not admin of the company')
     } else {
       company = await Company.findByIdAndDelete(id);
       res.status(200).json(company)
     }
   } catch (error) {
-    next(error)
+    next(createError(404))
   }
 });
 
