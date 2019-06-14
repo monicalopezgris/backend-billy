@@ -4,9 +4,10 @@ const createError = require('http-errors');
 const router = express.Router();
 
 const Clients = require('../models/client');
+const { isLoggedIn } = require('../helpers/middelwares');
 
 
-router.get('/clients', async (req, res, next) => {
+router.get('/', isLoggedIn(), async (req, res, next) => {
   try {
     const list = await Clients.find();
     return res.status(200).json(list)
@@ -15,7 +16,7 @@ router.get('/clients', async (req, res, next) => {
   }
 });
 
-router.get('/clients/:id', async (req, res, next) => {
+router.get('/:id', isLoggedIn(), async (req, res, next) => {
   try {
     const { id } = req.params;
     const client = await Clients.findById(id);
@@ -25,7 +26,7 @@ router.get('/clients/:id', async (req, res, next) => {
   }
 });
 
-router.post('/clients', async (req, res, next) => {
+router.post('/', isLoggedIn(), async (req, res, next) => {
   const { name, cif, contact, street, streetNum, postalCode, country } = req.body;
 
   try {
@@ -47,7 +48,7 @@ router.post('/clients', async (req, res, next) => {
 },
 );
 
-router.put('/clients/:id', async (req, res, next) => {
+router.put('/:id', isLoggedIn(), async (req, res, next) => {
   const { id } = req.params;
   const { name, cif, contact, street, streetNum, postalCode, country } = req.body;
   try {
@@ -68,7 +69,7 @@ router.put('/clients/:id', async (req, res, next) => {
   }
 });
 
-router.delete('/clients/:id', async (req, res, next) => {
+router.delete('/:id', isLoggedIn(), async (req, res, next) => {
   const { id } = req.params;
   try {
     // const docInit = await Doc.findById(id);

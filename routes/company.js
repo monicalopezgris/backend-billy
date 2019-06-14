@@ -4,8 +4,9 @@ const createError = require('http-errors');
 const router = express.Router();
 
 const Company = require('../models/company');
+const { isLoggedIn } = require('../helpers/middelwares');
 
-router.get('/company', async (req, res, next) => {
+router.get('/company', isLoggedIn(), async (req, res, next) => {
   try {
     const list = await Company.find();
     return res.status(200).json(list)
@@ -14,7 +15,7 @@ router.get('/company', async (req, res, next) => {
   }
 });
 
-router.get('/company/:id', async (req, res, next) => {
+router.get('/company/:id', isLoggedIn(), async (req, res, next) => {
   try {
     const { id } = req.params;
     const company = await Company.findById(id);
@@ -24,7 +25,7 @@ router.get('/company/:id', async (req, res, next) => {
   }
 });
 
-router.post('/company', async (req, res, next) => {
+router.post('/company', isLoggedIn(), async (req, res, next) => {
   const { admin, users, name, cif, street, streetNum, postalCode, country } = req.body;
 
   try {
@@ -47,7 +48,7 @@ router.post('/company', async (req, res, next) => {
 },
 );
 
-router.put('/company/:id', async (req, res, next) => {
+router.put('/company/:id', isLoggedIn(), async (req, res, next) => {
   const { id } = req.params;
   const { admin, users, name, cif, street, streetNum, postalCode, country } = req.body;
   try {
@@ -74,7 +75,7 @@ router.put('/company/:id', async (req, res, next) => {
   }
 });
 
-router.delete('/company/:id', async (req, res, next) => {
+router.delete('/company/:id', isLoggedIn(), async (req, res, next) => {
   const { id, idUser } = req.params;
   try {
     let company = await Company.findById(id);
