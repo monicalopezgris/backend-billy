@@ -27,50 +27,53 @@ router.get('/:id', isLoggedIn(), async (req, res, next) => {
   }
 });
 
-router.post('/', isLoggedIn(), newClientDocValidator, async (req, res, next) => {
-  const { status, items } = req.body;
-  const clientId = req.body.clientId ? req.body.clientId : undefined;
-  const errors = validationResult(req);
+router.post('/',
+  isLoggedIn(),
+  // newClientDocValidator,
+  async (req, res, next) => {
+    const { status, items } = req.body;
+    const clientId = req.body.clientId ? req.body.clientId : undefined;
+    const errors = validationResult(req);
 
-  if (!errors.isEmpty()) {
-    return res.status(422).json(errors.array());
-  }
-
-  try {
-    if (clientId) {
-      const doc = await Doc.create({
-        status,
-        data: {
-          clientId,
-        },
-        items: items
-      });
-      res.status(200).json(doc);
-    } else {
-      const { name, cif, street, streetNum, postalCode, country } = req.body;
-      const doc = await Doc.create({
-        status,
-        data: {
-          client: {
-            name,
-            cif,
-            address: {
-              street,
-              streetNum,
-              postalCode,
-              country,
-            }
-          },
-          items: items
-        }
-      });
-      res.status(200).json(doc);
+    if (!errors.isEmpty()) {
+      return res.status(422).json(errors.array());
     }
 
-  } catch (error) {
-    next(createError(404))
-  }
-},
+    try {
+      if (clientId) {
+        const doc = await Doc.create({
+          status,
+          data: {
+            clientId,
+          },
+          items: items
+        });
+        res.status(200).json(doc);
+      } else {
+        const { name, cif, street, streetNum, postalCode, country } = req.body;
+        const doc = await Doc.create({
+          status,
+          data: {
+            client: {
+              name,
+              cif,
+              address: {
+                street,
+                streetNum,
+                postalCode,
+                country,
+              }
+            },
+            items: items
+          }
+        });
+        res.status(200).json(doc);
+      }
+
+    } catch (error) {
+      next(createError(404))
+    }
+  },
 );
 
 router.put('/:id', isLoggedIn(), newClientDocValidator, async (req, res, next) => {

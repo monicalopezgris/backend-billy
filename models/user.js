@@ -6,10 +6,8 @@ const userSchema = new Schema({
   username: String,
   password: String,
   clients: [{
-    clientId: {
-      type: ObjectId,
-      ref: 'Client',
-    },
+    type: ObjectId,
+    ref: 'Client',
   }],
 }, {
     timestamps: {

@@ -13,6 +13,7 @@ const {
 const {
   signUpValidator,
   logInValidator,
+  validationResult,
 } = require('../helpers/validators/auth');
 
 router.get('/me',
@@ -98,7 +99,7 @@ router.get(
   async (req, res, next) => {
     const { _id: id } = req.session.currentUser;
     try {
-      const user = await User.findById(id);
+      const user = await User.findById(id).populate('clients');
       if (!user) {
         next(createError(403));
       } else {
