@@ -9,25 +9,39 @@ const User = require('../models/user');
 const {
   isLoggedIn,
   isNotLoggedIn,
-  validationLoggin,
 } = require('../helpers/middelwares');
+const {
+  signUpValidator,
+  logInValidator,
+  validationResult,
+} = require('../helpers/validators/auth');
 
 router.get('/me',
- isLoggedIn(),
+  isLoggedIn(),
   (req, res, next) => {
-  res.json(req.session.currentUser);
-});
+    try {
+      res.json(req.session.currentUser);
+    } catch (error) {
+      next(createError(404))
+    }
+  });
 
 router.post(
   '/login',
   isNotLoggedIn(),
-  validationLoggin(),
+  logInValidator,
   async (req, res, next) => {
     const { username, password } = req.body;
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      return res.status(422).json(errors.array());
+    }
+
     try {
       const user = await User.findOne({ username });
       if (!user) {
-        next(createError(404));
+        next(createError(422));
       } else if (bcrypt.compareSync(password, user.password)) {
         req.session.currentUser = user;
         return res.status(200).json(user);
@@ -35,7 +49,7 @@ router.post(
         next(createError(401));
       }
     } catch (error) {
-      next(error);
+      next(createError(404));
     }
   },
 );
@@ -43,9 +57,14 @@ router.post(
 router.post(
   '/signup',
   isNotLoggedIn(),
-  validationLoggin(),
+  signUpValidator,
   async (req, res, next) => {
     const { username, password } = req.body;
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      return res.status(422).json(errors.array());
+    }
 
     try {
       const user = await User.findOne({ username }, 'username');
@@ -59,20 +78,37 @@ router.post(
         res.status(200).json(newUser);
       }
     } catch (error) {
-      next(error);
+      next(createError(404));
     }
   },
 );
 
 router.post('/logout', isLoggedIn(), (req, res, next) => {
-  req.session.destroy();
-  return res.status(204).send();
+  try {
+    req.session.destroy();
+    return res.status(204).send();
+  } catch (error) {
+    next(createError(404))
+  }
+
 });
 
-router.get('/private', isLoggedIn(), (req, res, next) => {
-  res.status(200).json({
-    message: 'This is a private message',
-  });
-});
+router.get(
+  '/meData',
+  isLoggedIn(),
+  async (req, res, next) => {
+    const { _id: id } = req.session.currentUser;
+    try {
+      const user = await User.findById(id).populate('clients');
+      if (!user) {
+        next(createError(403));
+      } else {
+        return res.status(200).json(user);
+      }
+    } catch (error) {
+      next(createError(404));
+    }
+  },
+);
 
 module.exports = router;

@@ -5,7 +5,7 @@ exports.isLoggedIn = () => (req, res, next) => {
     next();
   } else {
     next(
-      // createError(401)
+      createError(401)
     );
   }
 };
