@@ -31,7 +31,7 @@ router.post('/',
   isLoggedIn(),
   // newClientDocValidator,
   async (req, res, next) => {
-    const { status, items } = req.body;
+    const { status, ref, items } = req.body;
     const clientId = req.body.clientId ? req.body.clientId : undefined;
     const errors = validationResult(req);
 
@@ -43,6 +43,7 @@ router.post('/',
       if (clientId) {
         const doc = await Doc.create({
           status,
+          ref,
           data: {
             clientId,
           },
@@ -53,10 +54,10 @@ router.post('/',
         const { name, cif, street, streetNum, postalCode, country } = req.body;
         const doc = await Doc.create({
           status,
+          ref,
           data: {
             client: {
               name,
-              cif,
               address: {
                 street,
                 streetNum,
