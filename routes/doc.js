@@ -27,6 +27,18 @@ router.get('/:id', isLoggedIn(), async (req, res, next) => {
   }
 });
 
+router.get('/client/:id', isLoggedIn(), async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const list = await Doc.aggregate([
+      { $unwind: "$data" },
+      { $match: { "data.client.cif": id } }]);
+    return res.status(200).json(list)
+  } catch (error) {
+    next(error)
+  }
+});
+
 router.post('/',
   isLoggedIn(),
   // newClientDocValidator,
