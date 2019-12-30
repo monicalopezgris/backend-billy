@@ -5,6 +5,7 @@ const { ObjectId } = Schema.Types;
 const companySchema = new Schema({
   admin: ObjectId,
   users: Array,
+  admin: ObjectId,
   name: String,
   cif: String,
   address: {
@@ -14,11 +15,11 @@ const companySchema = new Schema({
     country: String,
   }
 }, {
-    timestamps: {
-      createdAt: 'created_at',
-      updatedAt: 'updated_at',
-    },
-  });
+  timestamps: {
+    createdAt: 'created_at',
+    updatedAt: 'updated_at',
+  },
+});
 
 const Company = mongoose.model('Company', companySchema);
 
