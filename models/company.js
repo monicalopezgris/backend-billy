@@ -4,7 +4,7 @@ const { ObjectId } = Schema.Types;
 
 const companySchema = new Schema({
   admin: ObjectId,
-  users: Array,
+  users: [{ type: ObjectId, ref: 'User' }],
   admin: ObjectId,
   name: String,
   cif: String,
