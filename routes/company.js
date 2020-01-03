@@ -5,7 +5,7 @@ const router = express.Router();
 
 const Company = require('../models/company');
 const { isLoggedIn } = require('../helpers/middelwares');
-const { validationResult, companyValidator } = require('../helpers/validators/doc');
+const { validationResult, companyValidator } = require('../helpers/validators/company');
 
 router.get('/', isLoggedIn(), async (req, res, next) => {
   try {
@@ -26,33 +26,36 @@ router.get('/:id', isLoggedIn(), async (req, res, next) => {
   }
 });
 
-// router.post('/', isLoggedIn(), companyValidator, async (req, res, next) => {
-//   const { admin, users, name, cif, street, streetNum, postalCode, country } = req.body;
-//   const errors = validationResult(req);
+router.post('/',
+  // isLoggedIn(),
+  companyValidator,
+  async (req, res, next) => {
+    const { admin, users, name, cif, street, streetNum, postalCode, country } = req.body;
+    const errors = validationResult(req);
 
-//   if (!errors.isEmpty()) {
-//     return res.status(422).json(errors.array());
-//   }
+    if (!errors.isEmpty()) {
+      return res.status(422).json(errors.array());
+    }
 
-//   try {
-//     const company = await Company.create({
-//       admin,
-//       users,
-//       name,
-//       cif,
-//       address: {
-//         street,
-//         number: streetNum,
-//         postalCode,
-//         country,
-//       }
-//     });
-//     res.status(200).json(company);
-//   } catch (error) {
-//     next(createError(404))
-//   }
-// },
-// );
+    try {
+      const company = await Company.create({
+        admin,
+        users,
+        name,
+        cif,
+        address: {
+          street,
+          number: streetNum,
+          postalCode,
+          country,
+        }
+      });
+      res.status(200).json(company);
+    } catch (error) {
+      next(createError(404))
+    }
+  },
+);
 
 // router.put('/:id', isLoggedIn(), companyValidator, async (req, res, next) => {
 //   const { id } = req.params;
