@@ -3,7 +3,11 @@ const Schema = mongoose.Schema;
 const { ObjectId } = Schema.Types;
 
 const companySchema = new Schema({
-  admin: ObjectId,
+  admin: {
+    type: ObjectId,
+    ref: 'User',
+    required: true
+  },
   users: [{ type: ObjectId, ref: 'User' }],
   admin: ObjectId,
   name: String,

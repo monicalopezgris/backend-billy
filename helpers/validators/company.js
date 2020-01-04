@@ -3,6 +3,9 @@ const { check, validationResult } = require('express-validator/check');
 module.exports = {
   validationResult,
   companyValidator: [
+    check('admin')
+      .matches(/^[a-fA-F0-9]{24}$/)
+      .withMessage('Admin ID user must be valid'),
     check('name')
       .isLength({ min: 3 })
       .withMessage('Article must have more than 3 characters')

@@ -32,7 +32,6 @@ router.post('/',
   async (req, res, next) => {
     const { admin, users, name, cif, street, streetNum, postalCode, country } = req.body;
     const errors = validationResult(req);
-
     if (!errors.isEmpty()) {
       return res.status(422).json(errors.array());
     }
