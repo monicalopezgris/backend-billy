@@ -80,6 +80,15 @@ describe('/POST company', () => {
   })
 });
 describe('DELETE company', () => {
+  it('should send 500 if user is not admin of the company', (done) => {
+    chai.request(server)
+      .delete('/api/company/' + actualResponse)
+      .end((err, res) => {
+        res.should.have.status(500);
+        done();
+      })
+    done()
+  })
   it('should send 200 on succeful deletion', (done) => {
     chai.request(server)
       .delete('/api/company/' + actualResponse)
