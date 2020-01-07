@@ -36,6 +36,15 @@ const companyNoCif = {
   streetNum: "3",
   country: "spain"
 }
+const companyUpdate = {
+  admin: testAdmin,
+  name: "companyLele",
+  cif: testCif,
+  street: "streetcorpaa",
+  postalCode: "08225",
+  streetNum: "3",
+  country: "spain"
+}
 
 describe('/POST company', () => {
   it('it should not POST a company without admin field', (done) => {
@@ -79,6 +88,26 @@ describe('/POST company', () => {
       })
   })
 });
+describe('UPDATE company', () => {
+  it('should send 500 if user is not admin of the company', (done) => {
+    chai.request(server)
+      .put('/api/company/' + actualResponse)
+      .send(companyUpdate)
+      .end((err, res) => {
+        res.should.have.status(500);
+        done();
+      })
+  })
+  it('should send 200 on succeful UPDATE', (done) => {
+    chai.request(server)
+      .put('/api/company/' + actualResponse)
+      .send(companyUpdate)
+      .end((err, res) => {
+        res.should.have.status(200);
+        done();
+      })
+  })
+})
 describe('DELETE company', () => {
   it('should send 500 if user is not admin of the company', (done) => {
     chai.request(server)
@@ -87,7 +116,6 @@ describe('DELETE company', () => {
         res.should.have.status(500);
         done();
       })
-    done()
   })
   it('should send 200 on succeful deletion', (done) => {
     chai.request(server)
@@ -96,6 +124,5 @@ describe('DELETE company', () => {
         res.should.have.status(200);
         done();
       })
-    done()
   })
 })
