@@ -88,7 +88,7 @@ describe('/POST company', () => {
       })
   })
 });
-describe('UPDATE company', () => {
+describe('/UPDATE company', () => {
   it('should send 500 if user is not admin of the company', (done) => {
     chai.request(server)
       .put('/api/company/' + actualResponse)
@@ -108,7 +108,7 @@ describe('UPDATE company', () => {
       })
   })
 })
-describe('DELETE company', () => {
+describe('/DELETE company', () => {
   it('should send 500 if user is not admin of the company', (done) => {
     chai.request(server)
       .delete('/api/company/' + actualResponse)

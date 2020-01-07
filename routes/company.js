@@ -90,20 +90,22 @@ router.post('/',
 //   }
 // });
 
-// router.delete('/:id', isLoggedIn(), async (req, res, next) => {
-//   const { id, idUser } = req.params;
-//   try {
-//     let company = await Company.findById(id);
-//     if (company.admin !== idUser) {
-//       next(createError(500))
-//       // res.status(500).send('You are not admin of the company')
-//     } else {
-//       company = await Company.findByIdAndDelete(id);
-//       res.status(200).json(company)
-//     }
-//   } catch (error) {
-//     next(createError(404))
-//   }
-// });
+router.delete('/:id',
+  // isLoggedIn(),
+  async (req, res, next) => {
+    const { id, idUser } = req.params;
+    try {
+      let company = await Company.findById(id);
+      if (company.admin !== idUser) {
+        next(createError(500))
+        // res.status(500).send('You are not admin of the company')
+      } else {
+        company = await Company.findByIdAndDelete(id);
+        res.status(200).json(company)
+      }
+    } catch (error) {
+      next(createError(404))
+    }
+  });
 
 module.exports = router;
