@@ -8,15 +8,16 @@ let should = chai.should();
 
 chai.use(chaiHttp);
 
-let actualResponse = undefined;
-const testCif = "B00000000"
-const testAdmin = "5cddb539a06bde0ab55c503d"
 const realUser = {
-  username: "admin",
-  password: "admin"
+  username: "testing",
+  password: "testing"
 }
 const nonExistUser = {
   username: "nonExistUser",
+  password: "aaa"
+}
+const nonPassUser = {
+  username: "testing",
   password: "aaa"
 }
 
@@ -29,5 +30,23 @@ describe('LOGIN', () => {
         res.should.have.status(422);
         done();
       });
+  });
+  it("it should res 401 on wrong password", (done) => {
+    chai.request(server)
+      .post('/auth/login')
+      .send(nonPassUser)
+      .end((err, res) => {
+        res.should.have.status(401);
+        done();
+      });
+  });
+  it("it should res 200 on successful login", (done) => {
+    chai.request(server)
+      .post('/auth/login')
+      .send(realUser)
+      .end((err, res) => {
+        res.should.have.status(200);
+      });
+    done();
   });
 });
