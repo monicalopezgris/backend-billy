@@ -27,3 +27,13 @@ exports.validationLoggin = () => (req, res, next) => {
     next();
   }
 }
+
+exports.isSuperAdmin = () => (req, res, next) => {
+  if (req.session.currentUser._id == process.env.SUPERADMIN) {
+    next();
+  } else {
+    next(
+      createError(401)
+    );
+  }
+};
