@@ -4,7 +4,7 @@ const createError = require('http-errors');
 const router = express.Router();
 
 const Company = require('../models/company');
-const { isLoggedIn, isSuperAdmin } = require('../helpers/middelwares');
+const { isLoggedIn, isSuperAdmin, isAdmin } = require('../helpers/middelwares');
 const { validationResult, companyValidator } = require('../helpers/validators/company');
 
 router.get('/',
@@ -19,18 +19,22 @@ router.get('/',
     }
   });
 
-router.get('/:id', isLoggedIn(), async (req, res, next) => {
-  try {
-    const { id } = req.params;
-    const company = await Company.findById(id);
-    return res.status(200).json(company);
-  } catch (error) {
-    next(createError(404))
-  }
-});
+router.get('/:id',
+  isLoggedIn(),
+  async (req, res, next) => {
+    try {
+      const currentUser = req.session.currentUser._id
+      const { id } = req.params;
+      const company = await Company.find({ _id: id, admin: currentUser })
+      return res.status(200).json(company);
+    } catch (error) {
+      next(createError(404))
+    }
+  });
 
 router.post('/',
   isLoggedIn(),
+  isSuperAdmin(),
   companyValidator,
   async (req, res, next) => {
     const { admin, users, name, cif, street, streetNum, postalCode, country } = req.body;
