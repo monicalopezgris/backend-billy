@@ -32,6 +32,23 @@ router.get('/:id',
     }
   });
 
+router.put('/:idCompany/addUser/:idUser',
+  isLoggedIn(),
+  async (req, res, next) => {
+    try {
+      const currentUser = req.session.currentUser._id
+      const { idCompany, idUser } = req.params;
+      const company = await Company.findOneAndUpdate(
+        { _id: idCompany, admin: currentUser },
+        { $push: { users: idUser } }
+      )
+      return res.status(200).json(company)
+    } catch (error) {
+      next(createError(404))
+    }
+
+  })
+
 router.post('/',
   isLoggedIn(),
   isSuperAdmin(),
