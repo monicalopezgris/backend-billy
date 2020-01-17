@@ -4,6 +4,7 @@ const createError = require('http-errors');
 const router = express.Router();
 
 const Company = require('../models/company');
+const User = require('../models/user');
 const { isLoggedIn, isSuperAdmin, isAdmin } = require('../helpers/middelwares');
 const { validationResult, companyValidator } = require('../helpers/validators/company');
 
@@ -38,16 +39,37 @@ router.put('/:idCompany/addUser/:idUser',
     try {
       const currentUser = req.session.currentUser._id
       const { idCompany, idUser } = req.params;
-      const company = await Company.findOneAndUpdate(
-        { _id: idCompany, admin: currentUser },
-        { $push: { users: idUser } }
-      )
-      return res.status(200).json(company)
+      const user = await User.find({ _id: idUser })
+      if (user) {
+        const test = await Company.find({ _id: idCompany, admin: currentUser })
+        const company = await Company.findOneAndUpdate(
+          { _id: idCompany, admin: currentUser },
+          { $push: { users: idUser } }
+        )
+        return res.status(200).json(company)
+      } else {
+        next(createError(401))
+      }
     } catch (error) {
       next(createError(404))
     }
 
   })
+
+router.get('/:idCompany/bills',
+  isLoggedIn(),
+  async (req, res, next) => {
+    try {
+      const currentUser = req.session.currentUser._id
+      const { idCompany } = req.params;
+      const company = await Company
+        .find({ _id: idCompany, admin: currentUser })
+        .populate('users')
+      return res.status(200).json(company);
+    } catch (error) {
+      next(createError(404))
+    }
+  });
 
 router.post('/',
   isLoggedIn(),
@@ -116,22 +138,22 @@ router.put('/:id',
     }
   });
 
-router.delete('/:id',
-  isLoggedIn(),
-  async (req, res, next) => {
-    const { id, idUser } = req.params;
-    try {
-      let company = await Company.findById(id);
-      if (company.admin !== idUser) {
-        next(createError(500))
-        // res.status(500).send('You are not admin of the company')
-      } else {
-        company = await Company.findByIdAndDelete(id);
-        res.status(200).json(company)
-      }
-    } catch (error) {
-      next(createError(404))
-    }
-  });
+// router.delete('/:id',
+//   isLoggedIn(),
+//   async (req, res, next) => {
+//     const { id, idUser } = req.params;
+//     try {
+//       let company = await Company.findById(id);
+//       if (company.admin !== idUser) {
+//         next(createError(500))
+//         // res.status(500).send('You are not admin of the company')
+//       } else {
+//         company = await Company.findByIdAndDelete(id);
+//         res.status(200).json(company)
+//       }
+//     } catch (error) {
+//       next(createError(404))
+//     }
+//   });
 
 module.exports = router;
