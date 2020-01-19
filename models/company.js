@@ -9,6 +9,7 @@ const companySchema = new Schema({
     required: true
   },
   users: [{ type: ObjectId, ref: 'User' }],
+  docs: [{ type: ObjectId, ref: 'Doc' }],
   admin: ObjectId,
   name: String,
   cif: String,

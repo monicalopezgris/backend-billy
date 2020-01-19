@@ -41,7 +41,6 @@ router.put('/:idCompany/addUser/:idUser',
       const { idCompany, idUser } = req.params;
       const user = await User.find({ _id: idUser })
       if (user) {
-        const test = await Company.find({ _id: idCompany, admin: currentUser })
         const company = await Company.findOneAndUpdate(
           { _id: idCompany, admin: currentUser },
           { $push: { users: idUser } }
@@ -62,10 +61,9 @@ router.get('/:idCompany/bills',
     try {
       const currentUser = req.session.currentUser._id
       const { idCompany } = req.params;
-      const company = await Company
+      const { docs: companyDocs } = await Company
         .find({ _id: idCompany, admin: currentUser })
-        .populate('users')
-      return res.status(200).json(company);
+      return res.status(200).json(companyDocs);
     } catch (error) {
       next(createError(404))
     }
