@@ -10,8 +10,11 @@ const { isLoggedIn } = require('../helpers/middelwares');
 
 router.get('/', isLoggedIn(), async (req, res, next) => {
   try {
-    const list = await Doc.find();
-    return res.status(200).json(list)
+    const currentUser = req.session.currentUser._id
+    const lista = await Doc.find({
+      users: { $contains: currentUser },
+    });
+    return res.status(200).json(docs)
   } catch (error) {
     next(error)
   }
@@ -20,7 +23,10 @@ router.get('/', isLoggedIn(), async (req, res, next) => {
 router.get('/:id', isLoggedIn(), async (req, res, next) => {
   try {
     const { id } = req.params;
-    const doc = await Doc.findById(id);
+    const doc = await Doc.findOne({
+      _id: id,
+      users: { $contains: currentUser }
+    });
     return res.status(200).json(doc);
   } catch (error) {
     next(createError(404))
