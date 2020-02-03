@@ -1,4 +1,5 @@
 const createError = require('http-errors');
+const Company = require('../models/company');
 
 exports.isLoggedIn = () => (req, res, next) => {
   if (req.session.currentUser) {
@@ -35,5 +36,23 @@ exports.isSuperAdmin = () => (req, res, next) => {
     next(
       createError(401)
     );
+  }
+};
+
+exports.isAdmin = (id) => async (req, res, next) => {
+  const currentUser = req.session.currentUser._id
+  try {
+    const company = await Company.find({ admin: currentUser })
+    console.log(id)
+    if (company._id == id) {
+      next();
+    } else {
+      next(
+        createError(401)
+      );
+    }
+  }
+  catch{
+
   }
 };

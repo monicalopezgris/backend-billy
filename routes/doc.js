@@ -23,6 +23,7 @@ router.get('/', isLoggedIn(), async (req, res, next) => {
 router.get('/:id', isLoggedIn(), async (req, res, next) => {
   try {
     const { id } = req.params;
+    const currentUser = req.session.currentUser._id
     const doc = await Doc.findOne({
       _id: id,
       users: { $contains: currentUser }
@@ -51,6 +52,7 @@ router.post('/',
   async (req, res, next) => {
     const { status, ref, items } = req.body;
     const clientId = req.body.clientId ? req.body.clientId : undefined;
+    const currentUser = req.session.currentUser._id
     const errors = validationResult(req);
 
     if (!errors.isEmpty()) {
@@ -62,6 +64,7 @@ router.post('/',
         const doc = await Doc.create({
           status,
           ref,
+          users: [currentUser],
           data: {
             clientId,
           },
@@ -73,9 +76,11 @@ router.post('/',
         const doc = await Doc.create({
           status,
           ref,
+          users: [currentUser],
           data: {
             client: {
               name,
+              cif,
               address: {
                 street,
                 streetNum,
@@ -98,6 +103,7 @@ router.post('/',
 router.put('/:id', isLoggedIn(), newClientDocValidator, async (req, res, next) => {
   const { id } = req.params;
   const clientId = req.body.clientId ? req.body.clientId : false;
+  const currentUser = req.session.currentUser._id
   const errors = validationResult(req);
 
   if (!errors.isEmpty()) {
@@ -108,7 +114,10 @@ router.put('/:id', isLoggedIn(), newClientDocValidator, async (req, res, next) =
     const actualDoc = await Doc.findById(id);
     if (actualDoc.status === "draft") {
       if (clientId) {
-        const doc = await Doc.findByIdAndUpdate(id, {
+        const doc = await Doc.findOneAndUpdate({
+          _id: id,
+          users: { $contains: currentUser }
+        }, {
           status,
           clientId,
           data: {

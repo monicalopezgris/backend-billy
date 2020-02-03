@@ -9,6 +9,14 @@ const docSchema = new Schema({
     type: String,
     default: 'draft',
   },
+  users: [{
+    type: ObjectId,
+    ref: 'Client',
+  }],
+  company: {
+    type: ObjectId,
+    ref: 'Client',
+  },
   data: {
     clientId: {
       type: ObjectId,
@@ -32,11 +40,11 @@ const docSchema = new Schema({
     }]
   }
 }, {
-    timestamps: {
-      createdAt: true,
-      updatedAt: true
-    },
-  });
+  timestamps: {
+    createdAt: true,
+    updatedAt: true
+  },
+});
 
 const Doc = mongoose.model('Doc', docSchema);
 
